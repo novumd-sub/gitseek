@@ -1,4 +1,4 @@
-package io.novumd.github
+package io.novumd.gitseek
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

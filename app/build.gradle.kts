@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.novumd.github"
+    namespace = "io.novumd.gitseek"
     compileSdk {
         version = release(36)
     }
@@ -15,7 +15,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
