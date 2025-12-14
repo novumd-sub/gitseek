@@ -1,4 +1,4 @@
-package io.novumd.gitseek.io.novumd.gitseek.ui.bookmark
+package io.novumd.gitseek.ui.bookmark
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
