@@ -19,7 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import io.novumd.gitseek.io.novumd.gitseek.ui.bookmark.BottomTab
+import io.novumd.gitseek.ui.bookmark.BottomTab
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {

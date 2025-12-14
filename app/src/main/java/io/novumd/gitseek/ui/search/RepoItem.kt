@@ -97,7 +97,7 @@ fun RepoItem(
                     if (isBookmarked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
                 Icon(
                     imageVector = icon,
-                    contentDescription = stringResource(R.string.cd_bookmark)
+                    contentDescription = stringResource(R.string.label_bookmark)
                 )
             }
         }
