@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.novumd.gitseek.R
@@ -27,7 +28,7 @@ import io.novumd.gitseek.ui.components.ErrorBanner
 
 @Composable
 fun SearchScreen(
-    vm: SearchViewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel<SearchViewModel>(),
+    vm: SearchViewModel = hiltViewModel<SearchViewModel>(),
     navigateToDetail: (repoId: Long) -> Unit = { _ -> },
 ) {
     val pageState by vm.state.collectAsState()
