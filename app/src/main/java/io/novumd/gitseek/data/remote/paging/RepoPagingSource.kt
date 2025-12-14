@@ -3,11 +3,11 @@ package io.novumd.gitseek.data.remote.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.github.michaelbull.result.mapBoth
-import io.ktor.network.sockets.SocketTimeoutException
 import io.novumd.gitseek.core.errors.ApiErr
 import io.novumd.gitseek.data.model.toDomainModel
 import io.novumd.gitseek.data.remote.GitHubApi
 import io.novumd.gitseek.domain.model.Repo
+import java.net.SocketException
 
 /**
  * リポジトリ検索のPagingSource実装
@@ -37,7 +37,7 @@ class RepoPagingSource(
                 // APIエラーを一旦例外に変換してPagingに伝える
                 // TODO: より良いエラーハンドリング方法を検討
                 val pagingErr: Throwable = when (e) {
-                    is ApiErr.Offline -> SocketTimeoutException()
+                    is ApiErr.Offline -> SocketException()
                     is ApiErr.Unexpected -> IllegalStateException("Unexpected API error")
                 }
                 LoadResult.Error(pagingErr)
