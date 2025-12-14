@@ -19,9 +19,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import dagger.hilt.android.AndroidEntryPoint
 import io.novumd.gitseek.ui.bookmark.BottomTab
+import io.novumd.gitseek.ui.search.SearchScreen
 import kotlinx.coroutines.flow.collectLatest
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +82,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.padding(padding)
                 ) {
                     composable<BottomTab.Search> {
-                        Text("Search Screen")
+                        SearchScreen {}
                     }
                     composable<BottomTab.Bookmark> {
                         Text("Bookmark Screen")
