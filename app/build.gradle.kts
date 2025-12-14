@@ -21,6 +21,10 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val githubToken = providers.gradleProperty("GITHUB_TOKEN").orNull
+        if (githubToken != null) {
+            buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
+        }
     }
 
     buildTypes {
@@ -48,6 +52,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
+}
+
+secrets {
+    defaultPropertiesFileName = "local.properties"
 }
 
 dependencies {
