@@ -11,6 +11,5 @@
     <string name="banner_error_title">ネットワークエラー</string>
     <string name="label_lang">言語: %1$s</string>
     <string name="label_updated">更新: %1$s</string>
-    <string name="cd_bookmark">ブックマーク</string>
 </resources>
 
