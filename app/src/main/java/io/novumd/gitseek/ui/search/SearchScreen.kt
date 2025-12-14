@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +44,7 @@ fun SearchScreen(
     navigateToDetail: (repoId: Long) -> Unit = { _ -> },
 ) {
     val pageState by vm.state.collectAsState()
+
     SearchScreenContent(
         pageState = pageState,
         dispatchSearchIntent = { intent -> vm.dispatch(intent) },
@@ -103,35 +105,41 @@ private fun SearchScreenContent(
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
 
-                // 検索結果一覧
-                LazyColumn(Modifier.fillMaxSize()) {
-                    items(lazyItems.itemCount) { index ->
-                        val repo = lazyItems[index]
-                        if (repo != null) {
-                            RepoItem(
-                                repo = repo,
-                                isBookmarked = pageState.bookmarkedIds.contains(repo.repoId),
-                                onBookmarkToggle = { _, _ -> },
-                                onClick = { navigateToDetail(repo.repoId) }
-                            )
-                        }
-                    }
-
-                    // エラーバナー
-                    lazyItems.also { items ->
-                        val error = (items.loadState.refresh as? LoadState.Error)?.error
-
-                        if (error != null) {
-                            val (isOffline, message) = when (error) {
-                                is java.net.SocketException -> true to context.getString(R.string.banner_offline_title)
-                                else -> false to context.getString(R.string.banner_offline_title)
+                PullToRefreshBox(
+                    isRefreshing = lazyItems.loadState.refresh is LoadState.Loading,
+                    onRefresh = { dispatchSearchIntent(SearchIntent.Retry) },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // 検索結果一覧
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        items(lazyItems.itemCount) { index ->
+                            val repo = lazyItems[index]
+                            if (repo != null) {
+                                RepoItem(
+                                    repo = repo,
+                                    isBookmarked = pageState.bookmarkedIds.contains(repo.repoId),
+                                    onBookmarkToggle = { _, _ -> },
+                                    onClick = { navigateToDetail(repo.repoId) }
+                                )
                             }
-                            item {
-                                ErrorBanner(
-                                    isOffline = isOffline,
-                                    message = message,
-                                ) {
-                                    dispatchSearchIntent(SearchIntent.Retry)
+                        }
+
+                        // エラーバナー
+                        lazyItems.also { items ->
+                            val error = (items.loadState.refresh as? LoadState.Error)?.error
+
+                            if (error != null) {
+                                val (isOffline, message) = when (error) {
+                                    is java.net.SocketException -> true to context.getString(R.string.banner_offline_title)
+                                    else -> false to context.getString(R.string.banner_offline_title)
+                                }
+                                item {
+                                    ErrorBanner(
+                                        isOffline = isOffline,
+                                        message = message,
+                                    ) {
+                                        dispatchSearchIntent(SearchIntent.Retry)
+                                    }
                                 }
                             }
                         }
@@ -156,7 +164,8 @@ private fun KeyboardVisibilityEffect(onChanged: (isVisible: Boolean) -> Unit) {
     val viewTreeObserver = view.viewTreeObserver
     DisposableEffect(view) {
         val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val isKeyboardOpen = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime())
+            val isKeyboardOpen =
+                ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime())
             onChanged(isKeyboardOpen ?: true)
         }
 
