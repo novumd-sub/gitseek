@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GitSeek</string>
+    <string name="label_search">検索</string>
+    <string name="label_bookmark">ブックマーク</string>
+    <string name="label_lang">言語: %1$s</string>
+    <string name="label_updated">更新: %1$s</string>
     <string name="tab_search">検索</string>
     <string name="tab_bookmark">ブックマーク</string>
 </resources>

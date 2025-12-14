@@ -18,7 +18,7 @@ sealed interface BottomTab {
 
     @Serializable
     data class Search(
-        @get:StringRes override val labelRes: Int = R.string.tab_search,
+        @get:StringRes override val labelRes: Int = R.string.label_search,
     ) : BottomTab {
         override val icon: ImageVector
             get() = Icons.Filled.Search
@@ -26,7 +26,7 @@ sealed interface BottomTab {
 
     @Serializable
     data class Bookmark(
-        @get:StringRes override val labelRes: Int = R.string.tab_bookmark,
+        @get:StringRes override val labelRes: Int = R.string.label_bookmark,
     ) : BottomTab {
         override val icon: ImageVector
             get() = Icons.Filled.Favorite

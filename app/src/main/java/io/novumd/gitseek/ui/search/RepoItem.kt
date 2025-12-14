@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -50,22 +55,38 @@ fun RepoItem(
             AsyncImage(
                 model = repo.owner.avatarUrl,
                 contentDescription = repo.owner.ownerName,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+                placeholder = rememberVectorPainter(image = Icons.Filled.Sync),
+                error = rememberVectorPainter(image = Icons.Filled.Error),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(Modifier.width(12.dp))
 
             Column(Modifier.weight(1f)) {
-                Text(repo.repoName, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = repo.repoName,
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Row {
-                    Text(repo.language ?: "-")
+                    Icon(
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(14.dp)
+                    )
 
-                    Spacer(Modifier.width(8.dp))
-
-                    Text("${repo.stargazersCount}")
+                    Text(
+                        text = repo.stargazersCount.toString(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 Text(
-                    stringResource(R.string.label_updated, repo.updatedAt),
+                    text = stringResource(R.string.label_lang, repo.language ?: "-"),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = stringResource(R.string.label_updated, repo.updatedAt),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -74,7 +95,10 @@ fun RepoItem(
             ) {
                 val icon =
                     if (isBookmarked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
-                Icon(imageVector = icon, contentDescription = "Bookmark")
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(R.string.cd_bookmark)
+                )
             }
         }
     }
