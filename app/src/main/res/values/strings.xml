@@ -3,6 +3,10 @@
     <string name="app_name">GitSeek</string>
     <string name="label_search">Search</string>
     <string name="label_bookmark">Bookmarks</string>
+    <string name="msg_common_error">Failed to fetch the latest data. You can retry or swipe to refresh.</string>
+    <string name="label_retry">Retry</string>
+    <string name="banner_offline_title">Offline mode</string>
+    <string name="banner_error_title">Network error</string>
     <string name="label_lang">Lang: %1$s</string>
     <string name="label_issues">Issues: %1$d</string>
     <string name="label_updated">Updated: %1$s</string>

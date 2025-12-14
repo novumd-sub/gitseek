@@ -3,6 +3,10 @@
     <string name="app_name">GitSeek</string>
     <string name="label_search">検索</string>
     <string name="label_bookmark">ブックマーク</string>
+    <string name="msg_common_error">最新データの取得に失敗しました。再試行するか、スワイプで更新してください。</string>
+    <string name="label_retry">再試行</string>
+    <string name="banner_offline_title">オフラインモード</string>
+    <string name="banner_error_title">ネットワークエラー</string>
     <string name="label_lang">言語: %1$s</string>
     <string name="label_updated">更新: %1$s</string>
     <string name="tab_search">検索</string>
