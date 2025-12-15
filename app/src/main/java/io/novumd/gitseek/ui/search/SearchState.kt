@@ -14,6 +14,7 @@ data class SearchState(
 )
 
 sealed interface SearchIntent {
+    data object Init : SearchIntent
     data class QueryChanged(val value: String) : SearchIntent
     data object EnterPressed : SearchIntent
     data object Retry : SearchIntent
