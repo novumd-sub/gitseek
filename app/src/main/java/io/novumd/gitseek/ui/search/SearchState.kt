@@ -8,7 +8,6 @@ data class SearchState(
     val query: String = "",
     val isLoading: Boolean = false,
     val isOffline: Boolean = false,
-    val isUnexpectedError: Boolean = false,
     val errorMessage: String? = null,
     val results: Flow<PagingData<Repo>>? = null,
     val bookmarkedIds: Set<Long> = emptySet(),
