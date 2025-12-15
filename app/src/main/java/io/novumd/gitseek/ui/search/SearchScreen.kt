@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
@@ -34,6 +33,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.novumd.gitseek.R
 import io.novumd.gitseek.ui.components.ErrorBanner
+import java.net.SocketException
 
 /**
  * 検索画面
@@ -64,7 +64,6 @@ private fun SearchScreenContent(
     val (keyword, onKeywordChanged) = remember(pageState.query) { mutableStateOf(pageState.query) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
 
     // キーボードが閉じたら必ずフォーカスを解除
     KeyboardVisibilityEffect { isVisible ->
@@ -129,11 +128,11 @@ private fun SearchScreenContent(
                             val error = (items.loadState.refresh as? LoadState.Error)?.error
 
                             if (error != null) {
-                                val (isOffline, message) = when (error) {
-                                    is java.net.SocketException -> true to context.getString(R.string.banner_offline_title)
-                                    else -> false to context.getString(R.string.banner_offline_title)
-                                }
                                 item {
+                                    val (isOffline, message) = when (error) {
+                                        is SocketException -> true to stringResource(R.string.banner_offline_title)
+                                        else -> false to stringResource(R.string.banner_error_title)
+                                    }
                                     ErrorBanner(
                                         isOffline = isOffline,
                                         message = message,
