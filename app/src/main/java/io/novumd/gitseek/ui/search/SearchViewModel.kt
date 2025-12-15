@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,8 +50,10 @@ class SearchViewModel @Inject constructor(
                             results = results
                         )
                     }
-                    flowOf(Unit)
-                }.collect {}
+                    emptyFlow<Unit>()
+                }.collect {
+                    // 実際のデータはPagingDataで流れてくるためここでは何もしない
+                }
         }
     }
 
