@@ -29,6 +29,7 @@ import io.novumd.gitseek.ui.bookmark.BottomTab
 import io.novumd.gitseek.ui.components.preventMultipleClick
 import io.novumd.gitseek.ui.detail.DetailScreen
 import io.novumd.gitseek.ui.search.SearchScreen
+import io.novumd.gitseek.ui.theme.GitSeekTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -42,81 +43,83 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val navController = rememberNavController()
-            val tabs = remember {
-                listOf(
-                    BottomTab.Search(), // startDestination
-                    BottomTab.Bookmark()
-                )
-            }
-            val (selectedTab, onSelectedTabChanged) = remember { mutableStateOf(tabs.first()) }
-
-            LaunchedEffect(navController) {
-                navController.currentBackStackEntryFlow.collectLatest { entry ->
-                    val search = runCatching { entry.toRoute<BottomTab.Search>() }.getOrNull()
-                    search?.let { onSelectedTabChanged(it) }
-
-                    val bookmark = runCatching { entry.toRoute<BottomTab.Bookmark>() }.getOrNull()
-                    bookmark?.let { onSelectedTabChanged(it) }
+            GitSeekTheme {
+                val navController = rememberNavController()
+                val tabs = remember {
+                    listOf(
+                        BottomTab.Search(), // startDestination
+                        BottomTab.Bookmark()
+                    )
                 }
-            }
+                val (selectedTab, onSelectedTabChanged) = remember { mutableStateOf(tabs.first()) }
 
-            Scaffold(
-                bottomBar = {
-                    NavigationBar {
-                        tabs.forEach { tab ->
-                            NavigationBarItem(
-                                selected = selectedTab == tab,
-                                onClick = preventMultipleClick {
-                                    onSelectedTabChanged(tab)
-                                    navController.navigate(tab) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                LaunchedEffect(navController) {
+                    navController.currentBackStackEntryFlow.collectLatest { entry ->
+                        val search = runCatching { entry.toRoute<BottomTab.Search>() }.getOrNull()
+                        search?.let { onSelectedTabChanged(it) }
+
+                        val bookmark = runCatching { entry.toRoute<BottomTab.Bookmark>() }.getOrNull()
+                        bookmark?.let { onSelectedTabChanged(it) }
+                    }
+                }
+
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            tabs.forEach { tab ->
+                                NavigationBarItem(
+                                    selected = selectedTab == tab,
+                                    onClick = preventMultipleClick {
+                                        onSelectedTabChanged(tab)
+                                        navController.navigate(tab) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = tab.icon,
-                                        contentDescription = stringResource(tab.labelRes)
-                                    )
-                                },
-                                label = { Text(stringResource(tab.labelRes)) }
-                            )
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = tab.icon,
+                                            contentDescription = stringResource(tab.labelRes)
+                                        )
+                                    },
+                                    label = { Text(stringResource(tab.labelRes)) }
+                                )
+                            }
                         }
                     }
-                }
-            ) { padding ->
+                ) { padding ->
 
-                NavHost(
-                    navController = navController,
-                    startDestination = tabs.first(),
-                    modifier = Modifier.padding(padding),
-                ) {
-                    composable<BottomTab.Search> {
-                        SearchScreen(
-                            navigateToDetail = { repo ->
-                                navController.navigate(DetailRoute(repo = repo))
-                            },
-                        )
-                    }
-                    composable<BottomTab.Bookmark> {
-                        BookmarkScreen(
-                            navigateToDetail = { repo ->
-                                navController.navigate(DetailRoute(repo = repo))
-                            }
-                        )
-                    }
-                    composable<DetailRoute>(
-                        typeMap = mapOf(typeOf<Repo>() to serializableType<Repo>())
-                    ) { entry ->
-                        val args = entry.toRoute<DetailRoute>()
-                        DetailScreen(
-                            repo = args.repo,
-                            onNavigateUp = { navController.popBackStack() },
-                        )
+                    NavHost(
+                        navController = navController,
+                        startDestination = tabs.first(),
+                        modifier = Modifier.padding(padding),
+                    ) {
+                        composable<BottomTab.Search> {
+                            SearchScreen(
+                                navigateToDetail = { repo ->
+                                    navController.navigate(DetailRoute(repo = repo))
+                                },
+                            )
+                        }
+                        composable<BottomTab.Bookmark> {
+                            BookmarkScreen(
+                                navigateToDetail = { repo ->
+                                    navController.navigate(DetailRoute(repo = repo))
+                                }
+                            )
+                        }
+                        composable<DetailRoute>(
+                            typeMap = mapOf(typeOf<Repo>() to serializableType<Repo>())
+                        ) { entry ->
+                            val args = entry.toRoute<DetailRoute>()
+                            DetailScreen(
+                                repo = args.repo,
+                                onNavigateUp = { navController.popBackStack() },
+                            )
+                        }
                     }
                 }
             }

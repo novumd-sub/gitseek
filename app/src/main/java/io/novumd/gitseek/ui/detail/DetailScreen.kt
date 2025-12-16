@@ -47,6 +47,7 @@ import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
 import io.novumd.gitseek.ui.components.preventMultipleClickable
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.search.StargazersCount
+import io.novumd.gitseek.ui.theme.GitSeekTheme
 
 /**
  * 詳細画面
@@ -233,25 +234,27 @@ fun DetailScreenContent(
 @LanguagePreviews
 @Composable
 private fun DetailScreenContent_Preview() {
-    DetailScreenContent(
-        pageState = DetailState(
-            repo = Repo(
-                repoId = 1L,
-                repoName = "novumd/gitseek",
-                description = "GitHubリポジトリ検索アプリ",
-                language = "Kotlin",
-                stargazersCount = 100,
-                watchersCount = 50,
-                forksCount = 20,
-                openIssuesCount = 5,
-                owner = io.novumd.gitseek.domain.model.RepoOwner(
-                    ownerName = "novumd",
-                    avatarUrl = "https://avatars.githubusercontent.com/u/12345678?v=4"
+    GitSeekTheme {
+        DetailScreenContent(
+            pageState = DetailState(
+                repo = Repo(
+                    repoId = 1L,
+                    repoName = "novumd/gitseek",
+                    description = "GitHubリポジトリ検索アプリ",
+                    language = "Kotlin",
+                    stargazersCount = 100,
+                    watchersCount = 50,
+                    forksCount = 20,
+                    openIssuesCount = 5,
+                    owner = io.novumd.gitseek.domain.model.RepoOwner(
+                        ownerName = "novumd",
+                        avatarUrl = "https://avatars.githubusercontent.com/u/12345678?v=4"
+                    ),
+                    htmlUrl = "",
+                    updatedAt = "2024-06-01",
+                    isBookmarked = true
                 ),
-                htmlUrl = "",
-                updatedAt = "2024-06-01",
-                isBookmarked = true
-            ),
+            )
         )
-    )
+    }
 }

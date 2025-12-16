@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.novumd.gitseek.R
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.preview.TogglePreviewParameterProvider
+import io.novumd.gitseek.ui.theme.GitSeekTheme
 import kotlin.text.isNotBlank
 
 /**
@@ -71,8 +72,10 @@ fun ErrorBanner(
 private fun ErrorBanner_Preview(
     @PreviewParameter(provider = TogglePreviewParameterProvider::class) isOffline: Boolean,
 ) {
-    ErrorBanner(
-        isOffline = isOffline,
-        message = stringResource(R.string.msg_common_error)
-    )
+    GitSeekTheme {
+        ErrorBanner(
+            isOffline = isOffline,
+            message = stringResource(R.string.msg_common_error)
+        )
+    }
 }
