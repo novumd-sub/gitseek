@@ -107,7 +107,7 @@ private fun SearchScreenContent(
 
                 PullToRefreshBox(
                     isRefreshing = lazyItems.loadState.refresh is LoadState.Loading,
-                    onRefresh = { dispatchSearchIntent(SearchIntent.Retry) },
+                    onRefresh = { dispatchSearchIntent(SearchIntent.SwipeRefresh) },
                     modifier = Modifier.fillMaxSize()
                 ) {
                     // 検索結果一覧
@@ -115,10 +115,13 @@ private fun SearchScreenContent(
                         items(lazyItems.itemCount) { index ->
                             val repo = lazyItems[index]
                             if (repo != null) {
+                                val isBookmarked = pageState.bookmarkedIds.contains(repo.repoId)
                                 RepoItem(
                                     repo = repo,
-                                    isBookmarked = pageState.bookmarkedIds.contains(repo.repoId),
-                                    onBookmarkToggle = { _, _ -> },
+                                    isBookmarked = isBookmarked,
+                                    onBookmarkToggle = { r, newState ->
+                                        dispatchSearchIntent(SearchIntent.ToggleBookmark(r, newState))
+                                    },
                                     onClick = { navigateToDetail(repo) }
                                 )
                             }

@@ -23,8 +23,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import io.novumd.gitseek.domain.model.Repo
+import io.novumd.gitseek.ui.bookmark.BookmarkScreen
 import io.novumd.gitseek.ui.bookmark.BottomTab
-import io.novumd.gitseek.ui.detail.DetailNavSource
 import io.novumd.gitseek.ui.detail.DetailScreen
 import io.novumd.gitseek.ui.search.SearchScreen
 import kotlinx.coroutines.flow.collectLatest
@@ -93,24 +93,22 @@ class MainActivity : ComponentActivity() {
                     composable<BottomTab.Search> {
                         SearchScreen(
                             navigateToDetail = { repo ->
-                                navController.navigate(
-                                    DetailRoute(
-                                        repo = repo,
-                                        navSource = DetailNavSource.Search
-                                    )
-                                )
+                                navController.navigate(DetailRoute(repo = repo))
                             },
                         )
                     }
                     composable<BottomTab.Bookmark> {
-                        Text("Bookmark Screen")
+                        BookmarkScreen(
+                            navigateToDetail = { repo ->
+                                navController.navigate(DetailRoute(repo = repo))
+                            }
+                        )
                     }
                     composable<DetailRoute>(
                         typeMap = mapOf(typeOf<Repo>() to serializableType<Repo>())
                     ) { entry ->
                         val args = entry.toRoute<DetailRoute>()
                         DetailScreen(
-                            navSource = args.navSource,
                             repo = args.repo,
                             onNavigateUp = { navController.popBackStack() },
                         )
@@ -140,7 +138,4 @@ inline fun <reified T : Any> serializableType(
 }
 
 @Serializable
-private data class DetailRoute(
-    val repo: Repo,
-    val navSource: DetailNavSource,
-)
+private data class DetailRoute(val repo: Repo)

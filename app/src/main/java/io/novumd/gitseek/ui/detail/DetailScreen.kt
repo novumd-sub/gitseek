@@ -29,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +44,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
+import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.search.StargazersCount
 
@@ -50,23 +53,39 @@ import io.novumd.gitseek.ui.search.StargazersCount
  */
 @Composable
 fun DetailScreen(
-    navSource: DetailNavSource,
-    repo: Repo? = null,
+    repo: Repo,
     onNavigateUp: () -> Unit = {},
     vm: DetailViewModel = hiltViewModel<DetailViewModel>(),
 ) {
     val pageState by vm.pageState.collectAsState()
+    val (showDeleteDialog, setShowDeleteDialog) = remember { mutableStateOf(false) }
+    val repoValue = pageState.repo
+    val onToggleBookmark = {
+        // OFF のときだけダイアログ
+        val isNotBookmarked = pageState.repo?.isBookmarked == false
+        if (isNotBookmarked) {
+            vm.onBookmarkChanged(true)
+        } else {
+            setShowDeleteDialog(true)
+        }
+    }
 
     LaunchedEffect(Unit) {
-        vm.load(
-            repo = repo,
-            pageSource = navSource
+        vm.load(repo = repo)
+    }
+
+    if (showDeleteDialog && repoValue != null) {
+        BookmarkDeleteDialog(
+            repo = repoValue,
+            onBookmarkToggle = { _, _ -> vm.onBookmarkChanged(false) },
+            onDissMissRequest = { setShowDeleteDialog(false) }
         )
     }
 
     DetailScreenContent(
         pageState = pageState,
         onNavigateUp = onNavigateUp,
+        onToggleBookmark = onToggleBookmark,
     )
 }
 
@@ -74,6 +93,7 @@ fun DetailScreen(
 fun DetailScreenContent(
     pageState: DetailState,
     onNavigateUp: () -> Unit = {},
+    onToggleBookmark: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -136,9 +156,13 @@ fun DetailScreenContent(
 
                             Spacer(Modifier.width(8.dp))
 
-                            IconButton(onClick = {}) {
+                            IconButton(onClick = { onToggleBookmark() }) {
                                 val icon =
-                                    if (pageState.isBookmarked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+                                    if (pageState.repo.isBookmarked) {
+                                        Icons.Filled.Favorite
+                                    } else {
+                                        Icons.Outlined.FavoriteBorder
+                                    }
                                 Icon(imageVector = icon, contentDescription = "Bookmark")
                             }
                         }
@@ -225,7 +249,8 @@ private fun DetailScreenContent_Preview() {
                     avatarUrl = "https://avatars.githubusercontent.com/u/12345678?v=4"
                 ),
                 htmlUrl = "",
-                updatedAt = "2024-06-01"
+                updatedAt = "2024-06-01",
+                isBookmarked = true
             ),
         )
     )

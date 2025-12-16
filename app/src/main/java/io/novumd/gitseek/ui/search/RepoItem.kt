@@ -20,6 +20,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -30,6 +32,7 @@ import coil.compose.AsyncImage
 import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.domain.model.RepoOwner
+import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 
 /**
@@ -37,11 +40,24 @@ import io.novumd.gitseek.ui.preview.LanguagePreviews
  */
 @Composable
 fun RepoItem(
-    repo: Repo,
+    repo: Repo?,
     isBookmarked: Boolean,
     onBookmarkToggle: (Repo, Boolean) -> Unit = { _, _ -> },
     onClick: () -> Unit = {},
 ) {
+    // repoが未ロードなら何も表示しない
+    if (repo == null) return
+
+    val (showConfirmDelete, setShowConfirmDelete) = remember { mutableStateOf(false) }
+
+    if (showConfirmDelete) {
+        BookmarkDeleteDialog(
+            repo = repo,
+            onBookmarkToggle = onBookmarkToggle,
+            onDissMissRequest = { setShowConfirmDelete(false) }
+        )
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,7 +105,16 @@ fun RepoItem(
             Spacer(Modifier.width(8.dp))
 
             IconButton(
-                onClick = { onBookmarkToggle(repo, !isBookmarked) }
+                onClick = {
+                    val nextState = !isBookmarked
+                    if (nextState) {
+                        // ON は即時反映
+                        onBookmarkToggle(repo, true)
+                    } else {
+                        // OFF は確認を表示
+                        setShowConfirmDelete(true)
+                    }
+                }
             ) {
                 val icon =
                     if (isBookmarked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
