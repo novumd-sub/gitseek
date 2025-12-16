@@ -40,7 +40,7 @@ import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.components.ErrorBanner
 import io.novumd.gitseek.ui.components.preventMultipleClick
-import java.net.SocketException
+import okio.IOException
 
 /**
  * 検索画面
@@ -125,7 +125,7 @@ private fun SearchScreenContent(
                             if (error != null) {
                                 item {
                                     ErrorBanner(
-                                        isOffline = error is SocketException,
+                                        isOffline = error is IOException,
                                     ) {
                                         dispatchSearchIntent(SearchIntent.Retry)
                                     }
