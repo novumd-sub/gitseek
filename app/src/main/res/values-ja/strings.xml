@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">GitSeek</string>
+
+    <!-- Search screen -->
     <string name="label_search">検索</string>
-    <string name="label_bookmark">ブックマーク</string>
     <string name="placeholder_search">キーワード（空欄＝人気順）</string>
+
+    <!-- Tabs -->
+    <string name="label_bookmark">ブックマーク</string>
+
+    <!-- Empty/Error/Retry messages -->
     <string name="msg_empty_results">キーワードに一致するリポジトリはありません。</string>
     <string name="msg_common_error">最新データの取得に失敗しました。再試行するか、スワイプで更新してください。</string>
     <string name="label_retry">再試行</string>
     <string name="label_back">戻る</string>
     <string name="banner_offline_title">オフラインモード</string>
     <string name="banner_error_title">ネットワークエラー</string>
+
+    <!-- Repo details labels -->
     <string name="label_watchers">ウォッチャー: %1$d</string>
     <string name="label_lang">言語: %1$s</string>
     <string name="label_forks">フォーク: %1$d</string>
     <string name="label_issues">課題: %1$d</string>
     <string name="label_updated">更新: %1$s</string>
     <string name="loading_next_page">次を読み込み中…</string>
-</resources>
 
+    <!-- Bookmark screen & dialogs -->
+    <string name="label_bookmark_empty">まだブックマークはありません</string>
+    <string name="dialog_bookmark_remove_title">ブックマークを削除しますか？</string>
+    <string name="dialog_bookmark_remove_text">このリポジトリをブックマークから削除します。</string>
+    <string name="dialog_delete">削除</string>
+    <string name="dialog_cancel">キャンセル</string>
+</resources>

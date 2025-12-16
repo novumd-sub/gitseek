@@ -3,7 +3,9 @@ package io.novumd.gitseek.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.novumd.gitseek.domain.usecase.ObserveBookmarksUseCase
 import io.novumd.gitseek.domain.usecase.SearchReposUseCase
+import io.novumd.gitseek.domain.usecase.ToggleBookmarkUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -21,6 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepos: SearchReposUseCase,
+    private val observeBookmarks: ObserveBookmarksUseCase,
+    private val toggleBookmark: ToggleBookmarkUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state.asStateFlow()
@@ -31,6 +35,7 @@ class SearchViewModel @Inject constructor(
 
     init {
         observeQuery()
+        observeBookmarkIds()
         dispatch(SearchIntent.Init)
     }
 
@@ -51,8 +56,15 @@ class SearchViewModel @Inject constructor(
                         )
                     }
                     emptyFlow<Unit>()
-                }.collect {
-                    // 実際のデータはPagingDataで流れてくるためここでは何もしない
+                }.collect { /* no-op */ }
+        }
+    }
+
+    private fun observeBookmarkIds() {
+        viewModelScope.launch {
+            observeBookmarks()
+                .collect { list ->
+                    _state.update { st -> st.copy(bookmarkedIds = list.map { it.repoId }.toSet()) }
                 }
         }
     }
@@ -69,9 +81,8 @@ class SearchViewModel @Inject constructor(
                 is SearchIntent.SwipeRefresh,
                 -> queryFlow.emit(_state.value.query)
 
-                is SearchIntent.ToggleBookmark -> {
-                    // TODO: ブックマーク切り替え処理実装
-                }
+                is SearchIntent.ToggleBookmark,
+                -> toggleBookmark(intent.repo, intent.newState)
             }
         }
     }
