@@ -1,5 +1,11 @@
 package io.novumd.gitseek.domain.model
 
+import kotlinx.serialization.Serializable
+
+/**
+ * GitHubリポジトリ情報（ドメインモデル）
+ */
+@Serializable
 data class Repo(
     val repoId: Long,
     val repoName: String,
@@ -14,6 +20,10 @@ data class Repo(
     val updatedAt: String,
 )
 
+/**
+ * リポジトリ所有者情報（ドメインモデル）
+ */
+@Serializable
 data class RepoOwner(
     val ownerName: String,
     val avatarUrl: String,

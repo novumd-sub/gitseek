@@ -70,28 +70,24 @@ fun RepoItem(
                     text = repo.repoName,
                     style = MaterialTheme.typography.titleMedium
                 )
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.Star,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(14.dp)
-                    )
 
-                    Text(
-                        text = repo.stargazersCount.toString(),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                StargazersCount(
+                    text = repo.stargazersCount.toString()
+                )
+
                 Text(
                     text = stringResource(R.string.label_lang, repo.language ?: "-"),
                     style = MaterialTheme.typography.bodySmall
                 )
+
                 Text(
                     text = stringResource(R.string.label_updated, repo.updatedAt),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+
+            Spacer(Modifier.width(8.dp))
+
             IconButton(
                 onClick = { onBookmarkToggle(repo, !isBookmarked) }
             ) {
@@ -103,6 +99,23 @@ fun RepoItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun StargazersCount(text: String) {
+    Row {
+        Icon(
+            imageVector = Icons.Outlined.Star,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(14.dp)
+        )
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 
