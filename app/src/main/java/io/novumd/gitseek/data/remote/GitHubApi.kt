@@ -16,9 +16,4 @@ interface GitHubApi {
         sort: String = "stars",
         order: String = "desc",
     ): Result<SearchResponse, ApiErr>
-
-    /**
-     * ヘルスチェックAPI
-     */
-    suspend fun ping(): Result<Unit, ApiErr>
 }

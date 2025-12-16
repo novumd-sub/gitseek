@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.github.michaelbull.result.Result
-import io.novumd.gitseek.core.errors.ApiErr
 import io.novumd.gitseek.core.errors.DbErr
 import io.novumd.gitseek.data.local.RepoDao
 import io.novumd.gitseek.data.local.toDomainModel
@@ -19,11 +18,6 @@ class GitHubRepositoryImpl(
     private val api: GitHubApi,
     private val dao: RepoDao,
 ) : GitHubRepository {
-
-    /**
-     * ヘルスチェックAPIを呼び出す
-     */
-    override suspend fun ping(): Result<Unit, ApiErr> = api.ping()
 
     /**
      * リポジトリ検索のページングデータを取得

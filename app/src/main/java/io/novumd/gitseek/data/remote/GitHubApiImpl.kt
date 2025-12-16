@@ -40,14 +40,6 @@ class GitHubApiImpl(
     }
 
     /**
-     * ヘルスチェックAPI
-     */
-    override suspend fun ping(): Result<Unit, ApiErr> = callSafety {
-        val res = client.get("zen")
-        res.body<String>()
-    }
-
-    /**
      * Apiで発生する例外をキャッチして、タイプセーフに扱う安全なラッパー関数
      */
     private suspend fun <V> callSafety(block: suspend () -> V): Result<V, ApiErr> = runCatching {
