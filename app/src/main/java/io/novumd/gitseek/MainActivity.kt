@@ -1,5 +1,6 @@
 package io.novumd.gitseek
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,14 +16,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
+import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.bookmark.BottomTab
+import io.novumd.gitseek.ui.detail.DetailNavSource
+import io.novumd.gitseek.ui.detail.DetailScreen
 import io.novumd.gitseek.ui.search.SearchScreen
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -76,19 +84,63 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             ) { padding ->
+
                 NavHost(
                     navController = navController,
                     startDestination = tabs.first(),
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier.padding(padding),
                 ) {
                     composable<BottomTab.Search> {
-                        SearchScreen {}
+                        SearchScreen(
+                            navigateToDetail = { repo ->
+                                navController.navigate(
+                                    DetailRoute(
+                                        repo = repo,
+                                        navSource = DetailNavSource.Search
+                                    )
+                                )
+                            },
+                        )
                     }
                     composable<BottomTab.Bookmark> {
                         Text("Bookmark Screen")
+                    }
+                    composable<DetailRoute>(
+                        typeMap = mapOf(typeOf<Repo>() to serializableType<Repo>())
+                    ) { entry ->
+                        val args = entry.toRoute<DetailRoute>()
+                        DetailScreen(
+                            navSource = args.navSource,
+                            repo = args.repo,
+                            onNavigateUp = { navController.popBackStack() },
+                        )
                     }
                 }
             }
         }
     }
 }
+
+inline fun <reified T : Any> serializableType(
+    isNullableAllowed: Boolean = false,
+    json: Json = Json,
+) = object : NavType<T>(isNullableAllowed = isNullableAllowed) {
+    override fun get(
+        bundle: Bundle,
+        key: String,
+    ) = bundle.getString(key)?.let { json.decodeFromString<T>(it) }
+
+    override fun parseValue(value: String): T = json.decodeFromString(value)
+    override fun serializeAsValue(value: T): String = Uri.encode(json.encodeToString(value))
+    override fun put(
+        bundle: Bundle,
+        key: String,
+        value: T,
+    ) = bundle.putString(key, json.encodeToString(value))
+}
+
+@Serializable
+private data class DetailRoute(
+    val repo: Repo,
+    val navSource: DetailNavSource,
+)

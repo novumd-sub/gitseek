@@ -32,6 +32,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.novumd.gitseek.R
+import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.components.ErrorBanner
 import java.net.SocketException
 
@@ -40,8 +41,8 @@ import java.net.SocketException
  */
 @Composable
 fun SearchScreen(
+    navigateToDetail: (repo: Repo) -> Unit = { _ -> },
     vm: SearchViewModel = hiltViewModel<SearchViewModel>(),
-    navigateToDetail: (repoId: Long) -> Unit = { _ -> },
 ) {
     val pageState by vm.state.collectAsState()
 
@@ -55,7 +56,7 @@ fun SearchScreen(
 @Composable
 private fun SearchScreenContent(
     pageState: SearchState,
-    navigateToDetail: (repoId: Long) -> Unit = { _ -> },
+    navigateToDetail: (repo: Repo) -> Unit = { _ -> },
     dispatchSearchIntent: (SearchIntent) -> Unit = { _ -> },
 ) {
     val pagingFlow = pageState.results
@@ -118,7 +119,7 @@ private fun SearchScreenContent(
                                     repo = repo,
                                     isBookmarked = pageState.bookmarkedIds.contains(repo.repoId),
                                     onBookmarkToggle = { _, _ -> },
-                                    onClick = { navigateToDetail(repo.repoId) }
+                                    onClick = { navigateToDetail(repo) }
                                 )
                             }
                         }
