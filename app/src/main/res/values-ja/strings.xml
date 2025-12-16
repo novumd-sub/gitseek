@@ -16,7 +16,7 @@
     <string name="label_retry">再試行</string>
     <string name="label_back">戻る</string>
     <string name="banner_offline_title">オフラインモード</string>
-    <string name="banner_error_title">通信エラー</string>
+    <string name="banner_error_title">ネットワークエラー</string>
 
     <!-- Repo details labels -->
     <string name="label_watchers">ウォッチャー: %1$d</string>
