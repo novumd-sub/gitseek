@@ -45,5 +45,6 @@ fun RepoData.toDomainModel(): Repo = Repo(
         avatarUrl = owner.avatarUrl
     ),
     htmlUrl = htmlUrl,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    isBookmarked = false,
 )

@@ -137,7 +137,8 @@ private fun RepoItem_Preview() {
             description = null,
             watchersCount = 0,
             forksCount = 0,
-            openIssuesCount = 0
+            openIssuesCount = 0,
+            isBookmarked = false,
         ),
         isBookmarked = true,
         onBookmarkToggle = { _, _ -> },

@@ -1,14 +1,16 @@
-package io.novumd.gitseek.domain.model
+package io.novumd.gitseek.data.local
 
-import io.novumd.gitseek.data.local.RepoEntity
-import kotlinx.serialization.Serializable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import io.novumd.gitseek.domain.model.Repo
+import io.novumd.gitseek.domain.model.RepoOwner
 
 /**
- * GitHubリポジトリ情報（ドメインモデル）
+ * リポジトリエンティティ
  */
-@Serializable
-data class Repo(
-    val repoId: Long,
+@Entity(tableName = "repos")
+data class RepoEntity(
+    @PrimaryKey val repoId: Long,
     val repoName: String,
     val description: String?,
     val language: String?,
@@ -16,22 +18,14 @@ data class Repo(
     val watchersCount: Int,
     val forksCount: Int,
     val openIssuesCount: Int,
-    val owner: RepoOwner,
+    val ownerName: String,
+    val avatarUrl: String,
     val htmlUrl: String,
     val updatedAt: String,
     val isBookmarked: Boolean,
 )
 
-/**
- * リポジトリ所有者情報（ドメインモデル）
- */
-@Serializable
-data class RepoOwner(
-    val ownerName: String,
-    val avatarUrl: String,
-)
-
-fun Repo.toDataModel(): RepoEntity = RepoEntity(
+fun RepoEntity.toDomainModel() = Repo(
     repoId = repoId,
     repoName = repoName,
     description = description,
@@ -40,8 +34,10 @@ fun Repo.toDataModel(): RepoEntity = RepoEntity(
     watchersCount = watchersCount,
     forksCount = forksCount,
     openIssuesCount = openIssuesCount,
-    ownerName = owner.ownerName,
-    avatarUrl = owner.avatarUrl,
+    owner = RepoOwner(
+        ownerName = ownerName,
+        avatarUrl = avatarUrl
+    ),
     htmlUrl = htmlUrl,
     updatedAt = updatedAt,
     isBookmarked = isBookmarked,
