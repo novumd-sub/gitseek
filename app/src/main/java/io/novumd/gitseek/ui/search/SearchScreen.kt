@@ -109,7 +109,7 @@ private fun SearchScreenContent(
                 }
 
                 PullToRefreshBox(
-                    isRefreshing = lazyItems.loadState.refresh is LoadState.Loading,
+                    isRefreshing = false,
                     onRefresh = { dispatchSearchIntent(SearchIntent.SwipeRefresh) },
                     modifier = Modifier.fillMaxSize()
                 ) {
