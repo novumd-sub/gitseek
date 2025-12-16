@@ -34,6 +34,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.components.ErrorBanner
+import io.novumd.gitseek.ui.components.preventMultipleClick
 import java.net.SocketException
 
 /**
@@ -110,23 +111,7 @@ private fun SearchScreenContent(
                     onRefresh = { dispatchSearchIntent(SearchIntent.SwipeRefresh) },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // 検索結果一覧
                     LazyColumn(Modifier.fillMaxSize()) {
-                        items(lazyItems.itemCount) { index ->
-                            val repo = lazyItems[index]
-                            if (repo != null) {
-                                val isBookmarked = pageState.bookmarkedIds.contains(repo.repoId)
-                                RepoItem(
-                                    repo = repo,
-                                    isBookmarked = isBookmarked,
-                                    onBookmarkToggle = { r, newState ->
-                                        dispatchSearchIntent(SearchIntent.ToggleBookmark(r, newState))
-                                    },
-                                    onClick = { navigateToDetail(repo) }
-                                )
-                            }
-                        }
-
                         // エラーバナー
                         lazyItems.also { items ->
                             val error = (items.loadState.refresh as? LoadState.Error)?.error
@@ -146,15 +131,42 @@ private fun SearchScreenContent(
                                 }
                             }
                         }
+
+                        // 検索結果一覧
+                        if (lazyItems.itemCount > 0) {
+                            items(lazyItems.itemCount) { index ->
+                                val repo = lazyItems[index]
+                                if (repo != null) {
+                                    val isBookmarked = pageState.bookmarkedIds.contains(repo.repoId)
+                                    RepoItem(
+                                        repo = repo,
+                                        isBookmarked = isBookmarked,
+                                        onBookmarkToggle = { r, newState ->
+                                            dispatchSearchIntent(
+                                                SearchIntent.ToggleBookmark(
+                                                    r,
+                                                    newState
+                                                )
+                                            )
+                                        },
+                                        onClick = preventMultipleClick { navigateToDetail(repo) }
+                                    )
+                                }
+                            }
+                        }
+
+                        // 検索結果0件
+                        if (lazyItems.itemCount == 0 && lazyItems.loadState.refresh is LoadState.NotLoading) {
+                            item {
+                                Box(
+                                    Modifier.fillParentMaxSize(),
+                                    contentAlignment = androidx.compose.ui.Alignment.Center
+                                ) {
+                                    Text(stringResource(R.string.msg_empty_results))
+                                }
+                            }
+                        }
                     }
-                }
-            } else {
-                // 初期表示（何もない状態）
-                Box(
-                    Modifier.fillMaxSize(),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
-                ) {
-                    Text(stringResource(R.string.msg_empty_results))
                 }
             }
         }
