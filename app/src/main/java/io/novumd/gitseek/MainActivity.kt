@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.bookmark.BookmarkScreen
 import io.novumd.gitseek.ui.bookmark.BottomTab
+import io.novumd.gitseek.ui.components.preventMultipleClick
 import io.novumd.gitseek.ui.detail.DetailScreen
 import io.novumd.gitseek.ui.search.SearchScreen
 import kotlinx.coroutines.flow.collectLatest
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         tabs.forEach { tab ->
                             NavigationBarItem(
                                 selected = selectedTab == tab,
-                                onClick = {
+                                onClick = preventMultipleClick {
                                     onSelectedTabChanged(tab)
                                     navController.navigate(tab) {
                                         popUpTo(navController.graph.findStartDestination().id) {

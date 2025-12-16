@@ -33,6 +33,7 @@ import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.domain.model.RepoOwner
 import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
+import io.novumd.gitseek.ui.components.preventMultipleClick
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 
 /**
@@ -65,7 +66,7 @@ fun RepoItem(
                 horizontal = 8.dp,
                 vertical = 4.dp
             ),
-        onClick = onClick
+        onClick = preventMultipleClick(onClick)
     ) {
         Row(
             modifier = Modifier.padding(12.dp)
@@ -105,7 +106,7 @@ fun RepoItem(
             Spacer(Modifier.width(8.dp))
 
             IconButton(
-                onClick = {
+                onClick = preventMultipleClick {
                     val nextState = !isBookmarked
                     if (nextState) {
                         // ON は即時反映

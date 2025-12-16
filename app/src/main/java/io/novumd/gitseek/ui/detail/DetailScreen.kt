@@ -1,7 +1,6 @@
 package io.novumd.gitseek.ui.detail
 
 import android.content.Intent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +44,7 @@ import coil.compose.AsyncImage
 import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
+import io.novumd.gitseek.ui.components.preventMultipleClickable
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.search.StargazersCount
 
@@ -103,7 +103,7 @@ fun DetailScreenContent(
             .padding(16.dp)
     ) {
         Row(
-            modifier = Modifier.clickable { onNavigateUp() },
+            modifier = Modifier.preventMultipleClickable(onClick = onNavigateUp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

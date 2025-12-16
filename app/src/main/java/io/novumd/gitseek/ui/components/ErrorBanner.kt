@@ -58,7 +58,7 @@ fun ErrorBanner(
         Spacer(Modifier.height(8.dp))
 
         Button(
-            onClick = onRetry,
+            onClick = preventMultipleClick { onRetry() },
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(stringResource(R.string.label_retry))

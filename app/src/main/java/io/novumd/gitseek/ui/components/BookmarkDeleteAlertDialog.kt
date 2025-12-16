@@ -22,13 +22,15 @@ fun BookmarkDeleteDialog(
         title = { Text(stringResource(R.string.dialog_bookmark_remove_title)) },
         text = { Text(stringResource(R.string.dialog_bookmark_remove_text)) },
         confirmButton = {
-            TextButton(onClick = {
-                onBookmarkToggle(repo, false)
-                onDissMissRequest(false)
-            }) { Text(stringResource(R.string.dialog_delete)) }
+            TextButton(
+                onClick = preventMultipleClick {
+                    onBookmarkToggle(repo, false)
+                    onDissMissRequest(false)
+                }
+            ) { Text(stringResource(R.string.dialog_delete)) }
         },
         dismissButton = {
-            TextButton(onClick = { onDissMissRequest(false) }) {
+            TextButton(onClick = preventMultipleClick { onDissMissRequest(false) }) {
                 Text(stringResource(R.string.dialog_cancel))
             }
         }
