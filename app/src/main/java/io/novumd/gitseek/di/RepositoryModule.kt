@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.novumd.gitseek.data.local.RepoDao
 import io.novumd.gitseek.data.remote.GitHubApi
 import io.novumd.gitseek.data.repo.GitHubRepository
 import io.novumd.gitseek.data.repo.GitHubRepositoryImpl
@@ -14,5 +15,8 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun provideGitHubRepository(api: GitHubApi): GitHubRepository = GitHubRepositoryImpl(api)
+    fun provideGitHubRepository(
+        api: GitHubApi,
+        dao: RepoDao,
+    ): GitHubRepository = GitHubRepositoryImpl(api, dao)
 }
