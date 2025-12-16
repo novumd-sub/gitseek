@@ -56,6 +56,7 @@ private class MultipleClickProcessorImpl : MultipleClickProcessor {
     private val now: Long
         get() = SystemClock.uptimeMillis()
 
+    @Volatile
     private var lastClickTime: Long = now
 
     override fun processEvent(
