@@ -54,7 +54,10 @@ private fun BookmarkScreenContent(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(bookmarks.size) { idx ->
+            items(
+                bookmarks.size,
+                key = { idx -> bookmarks[idx].repoId }
+            ) { idx ->
                 val item = bookmarks[idx]
                 RepoItem(
                     repo = item,

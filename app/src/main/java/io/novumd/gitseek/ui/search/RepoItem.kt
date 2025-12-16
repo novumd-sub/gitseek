@@ -33,7 +33,9 @@ import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.domain.model.RepoOwner
 import io.novumd.gitseek.ui.components.BookmarkDeleteDialog
+import io.novumd.gitseek.ui.components.preventMultipleClick
 import io.novumd.gitseek.ui.preview.LanguagePreviews
+import io.novumd.gitseek.ui.theme.GitSeekTheme
 
 /**
  * リポジトリ一覧アイテム
@@ -65,7 +67,7 @@ fun RepoItem(
                 horizontal = 8.dp,
                 vertical = 4.dp
             ),
-        onClick = onClick
+        onClick = preventMultipleClick(onClick)
     ) {
         Row(
             modifier = Modifier.padding(12.dp)
@@ -105,7 +107,7 @@ fun RepoItem(
             Spacer(Modifier.width(8.dp))
 
             IconButton(
-                onClick = {
+                onClick = preventMultipleClick {
                     val nextState = !isBookmarked
                     if (nextState) {
                         // ON は即時反映
@@ -147,26 +149,28 @@ fun StargazersCount(text: String) {
 @LanguagePreviews
 @Composable
 private fun RepoItem_Preview() {
-    RepoItem(
-        repo = Repo(
-            repoId = 1,
-            repoName = "novumd/gitseek",
-            owner = RepoOwner(
-                ownerName = "novumd",
-                avatarUrl = "https://avatars.githubusercontent.com/u/1684035?v=4"
+    GitSeekTheme {
+        RepoItem(
+            repo = Repo(
+                repoId = 1,
+                repoName = "novumd/gitseek",
+                owner = RepoOwner(
+                    ownerName = "novumd",
+                    avatarUrl = "https://avatars.githubusercontent.com/u/1684035?v=4"
+                ),
+                language = "Kotlin",
+                stargazersCount = 123,
+                updatedAt = "2024-06-01",
+                htmlUrl = "",
+                description = null,
+                watchersCount = 0,
+                forksCount = 0,
+                openIssuesCount = 0,
+                isBookmarked = false,
             ),
-            language = "Kotlin",
-            stargazersCount = 123,
-            updatedAt = "2024-06-01",
-            htmlUrl = "",
-            description = null,
-            watchersCount = 0,
-            forksCount = 0,
-            openIssuesCount = 0,
-            isBookmarked = false,
-        ),
-        isBookmarked = true,
-        onBookmarkToggle = { _, _ -> },
-        onClick = {}
-    )
+            isBookmarked = true,
+            onBookmarkToggle = { _, _ -> },
+            onClick = {}
+        )
+    }
 }

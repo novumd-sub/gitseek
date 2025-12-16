@@ -16,7 +16,7 @@
     <string name="label_retry">Retry</string>
     <string name="label_back">Back</string>
     <string name="banner_offline_title">Offline mode</string>
-    <string name="banner_error_title">Network error</string>
+    <string name="banner_error_title">Communication error</string>
 
     <!-- Repo details labels -->
     <string name="label_watchers">Watchers: %1$d</string>

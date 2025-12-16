@@ -3,12 +3,16 @@ package io.novumd.gitseek.ui.search
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -34,7 +39,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import io.novumd.gitseek.R
 import io.novumd.gitseek.domain.model.Repo
 import io.novumd.gitseek.ui.components.ErrorBanner
-import java.net.SocketException
+import io.novumd.gitseek.ui.components.preventMultipleClick
+import okio.IOException
 
 /**
  * 検索画面
@@ -86,6 +92,7 @@ private fun SearchScreenContent(
                     .fillMaxWidth()
                     .padding(8.dp),
                 singleLine = true,
+                shape = RoundedCornerShape(24.dp),
                 label = {
                     Text(stringResource(R.string.label_search))
                 },
@@ -106,55 +113,81 @@ private fun SearchScreenContent(
                 }
 
                 PullToRefreshBox(
-                    isRefreshing = lazyItems.loadState.refresh is LoadState.Loading,
+                    isRefreshing = false,
                     onRefresh = { dispatchSearchIntent(SearchIntent.SwipeRefresh) },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // 検索結果一覧
                     LazyColumn(Modifier.fillMaxSize()) {
-                        items(lazyItems.itemCount) { index ->
-                            val repo = lazyItems[index]
-                            if (repo != null) {
-                                val isBookmarked = pageState.bookmarkedIds.contains(repo.repoId)
-                                RepoItem(
-                                    repo = repo,
-                                    isBookmarked = isBookmarked,
-                                    onBookmarkToggle = { r, newState ->
-                                        dispatchSearchIntent(SearchIntent.ToggleBookmark(r, newState))
-                                    },
-                                    onClick = { navigateToDetail(repo) }
-                                )
-                            }
-                        }
-
                         // エラーバナー
                         lazyItems.also { items ->
                             val error = (items.loadState.refresh as? LoadState.Error)?.error
 
                             if (error != null) {
                                 item {
-                                    val (isOffline, message) = when (error) {
-                                        is SocketException -> true to stringResource(R.string.banner_offline_title)
-                                        else -> false to stringResource(R.string.banner_error_title)
-                                    }
                                     ErrorBanner(
-                                        isOffline = isOffline,
-                                        message = message,
+                                        isOffline = error is IOException,
                                     ) {
                                         dispatchSearchIntent(SearchIntent.Retry)
                                     }
                                 }
                             }
                         }
+
+                        // 検索結果一覧
+                        if (lazyItems.itemCount > 0) {
+                            items(
+                                lazyItems.itemCount,
+                                key = { index -> lazyItems[index]?.repoId?.toString() ?: "empty_$index" }
+                            ) { index ->
+                                val repo = lazyItems[index]
+                                if (repo != null) {
+                                    val isBookmarked = pageState.bookmarkedIds.contains(repo.repoId)
+                                    RepoItem(
+                                        repo = repo,
+                                        isBookmarked = isBookmarked,
+                                        onBookmarkToggle = { r, newState ->
+                                            dispatchSearchIntent(
+                                                SearchIntent.ToggleBookmark(
+                                                    r,
+                                                    newState
+                                                )
+                                            )
+                                        },
+                                        onClick = preventMultipleClick { navigateToDetail(repo) }
+                                    )
+                                }
+                            }
+
+                            if (lazyItems.loadState.append is LoadState.Loading) {
+                                item {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(12.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        CircularProgressIndicator()
+
+                                        Spacer(Modifier.height(8.dp))
+
+                                        Text(text = stringResource(R.string.loading_next_page))
+                                    }
+                                }
+                            }
+                        }
+
+                        // 検索結果0件
+                        if (lazyItems.itemCount == 0 && lazyItems.loadState.refresh is LoadState.NotLoading) {
+                            item {
+                                Box(
+                                    Modifier.fillParentMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(stringResource(R.string.msg_empty_results))
+                                }
+                            }
+                        }
                     }
-                }
-            } else {
-                // 初期表示（何もない状態）
-                Box(
-                    Modifier.fillMaxSize(),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
-                ) {
-                    Text(stringResource(R.string.msg_empty_results))
                 }
             }
         }

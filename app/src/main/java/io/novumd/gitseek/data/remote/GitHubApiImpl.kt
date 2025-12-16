@@ -10,8 +10,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.novumd.gitseek.core.errors.ApiErr
 import io.novumd.gitseek.data.model.SearchResponse
+import okio.IOException
 import timber.log.Timber
-import java.net.SocketException
 import kotlin.fold
 import kotlin.runCatching
 
@@ -40,14 +40,6 @@ class GitHubApiImpl(
     }
 
     /**
-     * ヘルスチェックAPI
-     */
-    override suspend fun ping(): Result<Unit, ApiErr> = callSafety {
-        val res = client.get("zen")
-        res.body<String>()
-    }
-
-    /**
      * Apiで発生する例外をキャッチして、タイプセーフに扱う安全なラッパー関数
      */
     private suspend fun <V> callSafety(block: suspend () -> V): Result<V, ApiErr> = runCatching {
@@ -56,7 +48,7 @@ class GitHubApiImpl(
         onSuccess = { v -> Ok(v) },
         onFailure = { e ->
             val apiErr = when (e) {
-                is SocketException -> ApiErr.Offline
+                is IOException -> ApiErr.Offline
                 is ResponseException -> ApiErr.Unexpected
                 else -> ApiErr.Unexpected
             }

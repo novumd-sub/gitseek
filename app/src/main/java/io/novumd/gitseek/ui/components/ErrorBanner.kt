@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.novumd.gitseek.R
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.preview.TogglePreviewParameterProvider
-import kotlin.text.isNotBlank
+import io.novumd.gitseek.ui.theme.GitSeekTheme
 
 /**
  * エラーバナー
@@ -27,7 +27,6 @@ import kotlin.text.isNotBlank
 @Composable
 fun ErrorBanner(
     isOffline: Boolean,
-    message: String,
     onRetry: () -> Unit = {},
 ) {
     val background =
@@ -48,17 +47,15 @@ fun ErrorBanner(
             style = MaterialTheme.typography.titleMedium,
         )
 
-        if (message.isNotBlank()) {
-            Text(
-                text = message,
-                color = contentColor
-            )
-        }
+        Text(
+            text = stringResource(R.string.msg_common_error),
+            color = contentColor
+        )
 
         Spacer(Modifier.height(8.dp))
 
         Button(
-            onClick = onRetry,
+            onClick = preventMultipleClick { onRetry() },
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(stringResource(R.string.label_retry))
@@ -71,8 +68,9 @@ fun ErrorBanner(
 private fun ErrorBanner_Preview(
     @PreviewParameter(provider = TogglePreviewParameterProvider::class) isOffline: Boolean,
 ) {
-    ErrorBanner(
-        isOffline = isOffline,
-        message = stringResource(R.string.msg_common_error)
-    )
+    GitSeekTheme {
+        ErrorBanner(
+            isOffline = isOffline,
+        )
+    }
 }
