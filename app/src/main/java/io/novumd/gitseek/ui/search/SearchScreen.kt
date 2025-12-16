@@ -124,13 +124,8 @@ private fun SearchScreenContent(
 
                             if (error != null) {
                                 item {
-                                    val (isOffline, message) = when (error) {
-                                        is SocketException -> true to stringResource(R.string.banner_offline_title)
-                                        else -> false to stringResource(R.string.banner_error_title)
-                                    }
                                     ErrorBanner(
-                                        isOffline = isOffline,
-                                        message = message,
+                                        isOffline = error is SocketException,
                                     ) {
                                         dispatchSearchIntent(SearchIntent.Retry)
                                     }

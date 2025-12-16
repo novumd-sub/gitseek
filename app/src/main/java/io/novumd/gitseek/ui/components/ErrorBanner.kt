@@ -20,7 +20,6 @@ import io.novumd.gitseek.R
 import io.novumd.gitseek.ui.preview.LanguagePreviews
 import io.novumd.gitseek.ui.preview.TogglePreviewParameterProvider
 import io.novumd.gitseek.ui.theme.GitSeekTheme
-import kotlin.text.isNotBlank
 
 /**
  * エラーバナー
@@ -28,7 +27,6 @@ import kotlin.text.isNotBlank
 @Composable
 fun ErrorBanner(
     isOffline: Boolean,
-    message: String,
     onRetry: () -> Unit = {},
 ) {
     val background =
@@ -49,12 +47,10 @@ fun ErrorBanner(
             style = MaterialTheme.typography.titleMedium,
         )
 
-        if (message.isNotBlank()) {
-            Text(
-                text = message,
-                color = contentColor
-            )
-        }
+        Text(
+            text = stringResource(R.string.msg_common_error),
+            color = contentColor
+        )
 
         Spacer(Modifier.height(8.dp))
 
@@ -75,7 +71,6 @@ private fun ErrorBanner_Preview(
     GitSeekTheme {
         ErrorBanner(
             isOffline = isOffline,
-            message = stringResource(R.string.msg_common_error)
         )
     }
 }

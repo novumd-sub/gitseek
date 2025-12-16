@@ -10,8 +10,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.novumd.gitseek.core.errors.ApiErr
 import io.novumd.gitseek.data.model.SearchResponse
+import okio.IOException
 import timber.log.Timber
-import java.net.SocketException
 import kotlin.fold
 import kotlin.runCatching
 
@@ -48,7 +48,7 @@ class GitHubApiImpl(
         onSuccess = { v -> Ok(v) },
         onFailure = { e ->
             val apiErr = when (e) {
-                is SocketException -> ApiErr.Offline
+                is IOException -> ApiErr.Offline
                 is ResponseException -> ApiErr.Unexpected
                 else -> ApiErr.Unexpected
             }
