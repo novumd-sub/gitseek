@@ -103,15 +103,14 @@ fun DetailScreenContent(
 
         if (pageState.repo != null) {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val url =
-                            runCatching { pageState.repo.htmlUrl.toUri() }.getOrNull()
-                        if (url != null) {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, url))
-                        }
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    val url =
+                        runCatching { pageState.repo.htmlUrl.toUri() }.getOrNull()
+                    if (url != null) {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, url))
                     }
+                }
             ) {
                 Box(Modifier.padding(12.dp)) {
                     Column {
