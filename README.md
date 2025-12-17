@@ -173,7 +173,6 @@
 
 ## 資料・ドキュメント
 
-- [README.md]
 - [実装計画書](docs/impl_plan.md)
 - [簡易設計書](docs/design.md)
 - [チーム開発ガイドライン]()
