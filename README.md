@@ -1,5 +1,12 @@
 # Git Seek
 
+||
+|:-:|
+| <video src="https://github.com/user-attachments/assets/88284938-6827-45af-9047-bc038cb976a3"> |
+
+
+
+
 <!--toc:start-->
 - [Git Seek](#git-seek)
   - [概要](#概要)
