@@ -1,0 +1,73 @@
+#!/bin/bash
+#set -euxo pipefail
+
+# detektコマンドの存在確認
+detekt_path=$(command -v detekt)
+if [ -z "$detekt_path" ]; then
+  echo "[ERROR] detekt is not installed."
+  exit 1
+fi
+
+echo "Running detekt check..."
+
+# 変更差分があるファイルのみをコマンド入力に含める
+cachedFiles="$(
+  git --no-pager diff \
+    --diff-filter=d \
+    --name-only \
+    --line-prefix="$(git rev-parse --show-toplevel)/" \
+    --cached
+)"
+echo -e "\n"
+echo "Cached Files:"
+echo "$cachedFiles"
+echo -e "\n"
+
+echo
+
+# ktファイルのみ抽出 -> filePath1,filePath2,filePath3
+DETEKT_INPUT=$(echo "$cachedFiles" | grep -E "\.kt$" | awk '{printf "%s%s", (NR==1 ? "" : ","), $0}')
+
+# コマンド入力がない場合は、解析せずに正常終了
+if [ -z "$DETEKT_INPUT" ]; then
+  echo "No Kotlin files to check. Skipping detekt."
+  exit 0
+fi
+
+HOOKS_DIR="$(pwd)/.git/hooks"
+
+# formatを先に入れる
+detekt \
+  --auto-correct \
+  --input "$DETEKT_INPUT" \
+  --build-upon-default-config \
+  --config "$HOOKS_DIR/formatting-config.yaml" \
+  --baseline "$HOOKS_DIR/baseline.xml" \
+  --create-baseline \
+  --plugins "$HOOKS_DIR/plugins/detekt-formatting-1.23.7.jar" 2>&1
+
+# リント実行
+OUTPUT=$(detekt \
+  --input "$DETEKT_INPUT" \
+  --build-upon-default-config \
+  --config "$HOOKS_DIR/config.yaml" \
+  --report html:"$HOOKS_DIR/reports/log.html" \
+  --plugins "$HOOKS_DIR/plugins/detekt-twitter-compose-0.0.26-all.jar" 2>&1)
+EXIT_CODE=$?
+
+# リントに引っかかった場合は(終了コードが0以外)、コミットを中断してエラーを出力
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "***********************************************"
+  echo "                 detekt failed                 "
+  echo " Please fix the above issues before committing "
+  echo "***********************************************"
+  echo "$OUTPUT"
+  # レポートを自動で開く
+  # macOS: open, Linux: xdg-open
+  if command -v open >/dev/null 2>&1; then
+    open "$HOOKS_DIR/reports/log.html"
+  elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$HOOKS_DIR/reports/log.html"
+  fi
+  exit $EXIT_CODE
+fi
