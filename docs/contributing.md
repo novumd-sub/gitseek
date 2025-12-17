@@ -1,21 +1,30 @@
 # チーム開発ガイドライン
 
+<!--toc:start-->
+- [チーム開発ガイドライン](#チーム開発ガイドライン)
+  - [Gitの運用ルール](#gitの運用ルール)
+    - [コミットメッセージテンプレート](#コミットメッセージテンプレート)
+  - [静的解析](#静的解析)
+    - [セットアップ手順](#セットアップ手順)
+<!--toc:end-->
+
 ## Gitの運用ルール
+
 ブランチおよびコミットメッセージのプレフィックスに「作業意図(用途: Usage)の明確化」のため、4つのシンプルなメッセージを付け加える
 
-* `feat`:
-    * 機能の追加
-* `fix`:
-    * バグ・仕様指摘の修正
-* `refactor`:
-    * コード構造・パフォーマンスの改善
-* `chore`:
-    * プロジェクト内の雑用(ドキュメント更新、依存関係追加・更新..etc)
-
+- `feat`:
+  - 機能の追加
+- `fix`:
+  - バグ・仕様指摘の修正
+- `refactor`:
+  - コード構造・パフォーマンスの改善
+- `chore`:
+  - プロジェクト内の雑用(ドキュメント更新、依存関係追加・更新..etc)
 
 ### コミットメッセージテンプレート
 
 LazyGitのカスタムコマンド例:
+
 ```yaml
 customCommands:
   - command: git commit -m '{{ .Form.commit_usage }} {{ .Form.commit_message }}'
@@ -56,6 +65,7 @@ customCommands:
 >
 >
 >`commit_template.txt`
+>
 >```
 ># ✨ feat:
 ># 🐛 fix:
@@ -65,6 +75,7 @@ customCommands:
 >
 >
 >`.gitconfig`
+>
 >```
 >[commit]
 >template = ./[path]/commit_message_template.txt
@@ -72,12 +83,11 @@ customCommands:
 >
 >`.gitconfig`の`commit.template`を設定しておくと、`git commit`時にテンプレートとして呼び出せる
 
-
 ## 静的解析
+
 detekt cli + ktlint formattingプラグイン + twitter-compose-rulesプラグイン で静的解析とコード整形を行います。
 
 pre-commit時にステージングエリアの変更を対象にリント・フォーマットを実行し、HTMLレポートを生成し、ブラウザ表示します。HTMLレポートにあるリンクから公式のルール説明ページに飛べるため、リント・フォーマットルールの確認が容易です。
-
 
 ### セットアップ手順
 
@@ -111,4 +121,3 @@ cp -rf ./hooks ./.git/
 git add .
 git commit
 ```
-
