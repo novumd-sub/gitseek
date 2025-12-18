@@ -52,7 +52,7 @@
 - 必要に応じてブックマーク機能を利用
 
 > [!NOTE]
-> アプリを動作させるには GitHub API トークンが必要です。
+> アプリを動作させるには 「GitHub API トークン」、「GitHub APIのURL」が必要です。
 > APIトークンは個人のGitHubアカウントから取得し、プロジェクト直下にある`sample.local.properties`を参考に
 `local.properties`を作成してください。
 >
@@ -172,7 +172,7 @@
 
 - [実装計画書](docs/impl_plan.md)
 - [簡易設計書](docs/design.md)
-- [チーム開発ガイドライン]()
+- [チーム開発ガイドライン](docs/contributing.md)
 
 ## おわりに
 
