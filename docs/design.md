@@ -159,11 +159,11 @@ ROP（Railway Oriented Programming）を採用し、各層でのエラーハン�
 - データ層: ネットワークエラー、データベースエラー
   - ネットワークエラー
     - APIレスポンス不正、APIレートリミット超過など:
-      - io.ktor.client.plugins.ResponseException→`ApiErr.Unexpected`
+      - ResponseException→`ApiErr.Unexpected`
     - ネットワークエラー:
-      - io.ktor.network.sockets.SocketException→`ApiErr.Offline`
+      - IOException→`ApiErr.Offline`
   - データベースエラー
-    - androidx.room.RoomDatabaseException→`DbErr`
+    - RoomDatabaseException→`DbErr`
   
 各層で`runCatching`を使い、例外をキャッチして適切なエラー型に変換し、kotlin-resultの`Result`型で返す
 
@@ -216,7 +216,7 @@ UI (Compose) <-> ViewModel <-> UseCase <-> Repository <-> Remote (Ktor) + Local 
 
 - **ETag**: コンテンツ更新時の効率的な検証のため
 
-ktorのHttpCacheプラグインを使用し、上記のキャッシュ戦略を実装
+ktorのOkHttpエンジンを使用し、上記のキャッシュ戦略を実装
 
 ### 画像
 
@@ -228,9 +228,8 @@ Coilによる自動キャッシュ
 
 ### ブックマーク
 
-Room に永続化
 
-複数件の構造化データ保存に最適であり、将来的な拡張も容易
+ブックマークはアプリ終了後も保持する必要があるため、Room に永続化
 
 ## テスト戦略
 
